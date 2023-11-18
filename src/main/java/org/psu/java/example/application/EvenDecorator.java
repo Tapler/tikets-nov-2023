@@ -2,6 +2,7 @@ package org.psu.java.example.application;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.psu.java.example.domain.Ticket;
 
@@ -11,20 +12,15 @@ import org.psu.java.example.domain.Ticket;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class EvenDecorator implements Ticket {
+    @Delegate(excludes = Exclude.class)
     Ticket wrapee;
 
     @Override
     public boolean isFortunate() {
-        return wrapee.getNumber() % 2 == 0 && wrapee.isFortunate() ;
+        return wrapee.getNumber() % 2 == 0 && wrapee.isFortunate();
     }
 
-    @Override
-    public int getLength() {
-        return wrapee.getLength();
-    }
-
-    @Override
-    public long getNumber() {
-        return wrapee.getNumber();
+    private interface Exclude {
+        boolean isFortunate();
     }
 }

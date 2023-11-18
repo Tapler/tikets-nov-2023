@@ -34,7 +34,7 @@ abstract class AbstractGenerator implements TicketGenerator {
     protected abstract IntFunction<Ticket> toTicket();
 
     protected IntStream getNumbersAsStream() {
-        return IntStream.rangeClosed(0, (int) Math.pow(10, ticketLength));
+        return IntStream.range(0, (int) Math.pow(10, ticketLength));
     }
 
     @Override
@@ -84,7 +84,7 @@ class SixDigitsTicketGenerator extends AbstractGenerator {
     @Override
     public Iterator<Ticket> getTickets() {
         return IntStream
-                .rangeClosed(0, 1000000)
+                .range(0, 1000000)
                 .mapToObj(number -> new TicketImpl(6, number))
                 .map(Ticket.class::cast)
                 .iterator();
