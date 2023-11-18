@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * 
@@ -28,19 +28,17 @@ public class FortunateTicketStreamImplTest {
      TicketGenerator ticketGenerator;
      int maxNumber;
      FortunateTicketService service;
+    private Ticket mockTicket;
 
     @Before
     public void setUp() {
         var length = 4;
         maxNumber = (int) Math.pow(10, 4);
+        mockTicket = Mockito.spy(new TicketImpl(length, maxNumber - 1));
+        when(mockTicket.isFortunate()).thenReturn(true);
         Iterator<Ticket> mockIterator = IntStream
                 .range(0, maxNumber)
-                .mapToObj(number -> {
-                    Ticket mockTicket = Mockito.spy(new TicketImpl(length, number));
-                    when(mockTicket.isFortunate()).thenReturn(true);
-                    System.out.println(mockTicket);
-                    return mockTicket;
-                })
+                .mapToObj(number -> mockTicket)
                 .iterator();
         ticketGenerator = Mockito.mock(TicketGenerator.class);
         when(ticketGenerator.getTickets()).thenReturn(mockIterator);
@@ -62,5 +60,6 @@ public class FortunateTicketStreamImplTest {
         int actual = service.count(ticketGenerator.getTickets());
         // then
         assertEquals("Должно быть 10 000 счастливых билетов", maxNumber, actual);
+        Mockito.verify(mockTicket, atLeast(maxNumber)).isFortunate();
     }
 }
