@@ -15,7 +15,7 @@ public class TicketImpl implements Ticket {
     int length;
     long number;
 
-    TicketImpl(int length, long number) {
+    public TicketImpl(int length, long number) {
         if (number < 0) {
             throw new IllegalArgumentException(String.format("Передан номер %d < 0", number));
         }
