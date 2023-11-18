@@ -1,8 +1,12 @@
 package org.psu.java.example.application;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.psu.java.example.domain.Ticket;
 
 import java.util.Iterator;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -10,9 +14,21 @@ public interface FortunateTicketService {
     static FortunateTicketService getInstance() {
         return new FortunateTicketImpl();
     }
+
     static FortunateTicketService getStreamInstance() {
-        return new FortunateTicketStreamImpl();
+        UnaryOperator<Ticket> evenDecorator = EvenDecorator::new;
+        UnaryOperator<Ticket> lastDigitSixDecorator = LastDigitSixDecorator::new;
+
+        UnaryOperator<Ticket> mapper = ticket -> evenDecorator.andThen(lastDigitSixDecorator).apply(ticket);
+
+        return new FortunateTicketStreamImpl(mapper);
     }
+
+//    static FortunateTicketService getStreamInstance() {
+//        UnaryOperator<Ticket> mapper = ticket -> new LastDigitSixDecorator(new EvenDecorator(ticket));
+////        UnaryOperator<Ticket> mapper = ((UnaryOperator<Ticket>) LastDigitSixDecorator::new).compose(EvenDecorator::new);
+//        return new FortunateTicketStreamImpl(mapper);
+//    }
 
     default int count(Iterator<Ticket> tickets) {
         var result = 0;
@@ -23,19 +39,28 @@ public interface FortunateTicketService {
             }
         }
         return result;
-    };
+    }
 }
 
 class FortunateTicketImpl implements FortunateTicketService {
 }
 
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 class FortunateTicketStreamImpl implements FortunateTicketService {
+    UnaryOperator<Ticket> mapper;
+
+    public FortunateTicketStreamImpl() {
+        mapper = UnaryOperator.identity();
+    }
+
     @Override
     public int count(Iterator<Ticket> tickets) {
         Iterable<Ticket> iterable = () -> tickets;
         Stream<Ticket> ticketStream =
                 StreamSupport.stream(iterable.spliterator(), false);
-        return (int) ticketStream.filter(Ticket::isFortunate).count();
-
+        return (int) ticketStream
+                .map(mapper)
+                .filter(Ticket::isFortunate).count();
     }
 }

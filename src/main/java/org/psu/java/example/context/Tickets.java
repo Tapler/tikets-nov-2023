@@ -1,6 +1,8 @@
 package org.psu.java.example.context;
 
+import org.psu.java.example.application.EvenDecorator;
 import org.psu.java.example.application.FortunateTicketService;
+import org.psu.java.example.application.LastDigitSixDecorator;
 import org.psu.java.example.domain.Ticket;
 import org.psu.java.example.infrastructure.GeneratorType;
 import org.psu.java.example.infrastructure.TicketGenerator;
@@ -59,6 +61,8 @@ public class Tickets {
         for (var i = -100; i < 10000; i++) {
             Optional<Ticket> ticket = generator.getTicket(i);
             ticket
+                    .map(LastDigitSixDecorator::new)
+                    .map(EvenDecorator::new)
                     .filter(Ticket::isFortunate)
                     .map(ticketToString)
                     .ifPresent(joiner::add);
