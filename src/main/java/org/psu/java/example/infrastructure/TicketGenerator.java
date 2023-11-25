@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.psu.java.example.domain.Ticket;
+import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -51,6 +52,7 @@ abstract class AbstractGenerator implements TicketGenerator {
     }
 }
 
+@Service
 class EightDigitsTicketGenerator extends AbstractGenerator {
 
     public EightDigitsTicketGenerator() {
@@ -90,7 +92,7 @@ class SixDigitsTicketGenerator extends AbstractGenerator {
                 .iterator();
     }
 }
-
+@Service
 class RecordTicketGenerator extends AbstractGenerator {
 
     public RecordTicketGenerator() {

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.psu.java.example.domain.Ticket;
+import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.function.UnaryOperator;
@@ -45,13 +46,14 @@ public interface FortunateTicketService {
 class FortunateTicketImpl implements FortunateTicketService {
 }
 
+//@Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 class FortunateTicketStreamImpl implements FortunateTicketService {
-    UnaryOperator<Ticket> mapper;
+    UnaryOperator<Ticket> decorate;
 
     public FortunateTicketStreamImpl() {
-        mapper = UnaryOperator.identity();
+        decorate = UnaryOperator.identity();
     }
 
     @Override
@@ -60,7 +62,7 @@ class FortunateTicketStreamImpl implements FortunateTicketService {
         Stream<Ticket> ticketStream =
                 StreamSupport.stream(iterable.spliterator(), false);
         return (int) ticketStream
-                .map(mapper)
+                .map(decorate)
                 .filter(Ticket::isFortunate).count();
     }
 }
