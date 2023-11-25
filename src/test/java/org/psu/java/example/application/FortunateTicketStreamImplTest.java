@@ -2,7 +2,6 @@ package org.psu.java.example.application;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -11,17 +10,18 @@ import org.mockito.Mockito;
 import org.psu.java.example.domain.Ticket;
 import org.psu.java.example.infrastructure.TicketGenerator;
 import org.psu.java.example.infrastructure.TicketImpl;
-import org.psu.java.example.infrastructure.TicketRecordImpl;
 
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.when;
 
 /**
- * 
+ * Тесты для {@link FortunateTicketStreamImpl}
  */
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FortunateTicketStreamImplTest {
 
@@ -38,7 +38,10 @@ public class FortunateTicketStreamImplTest {
         when(mockTicket.isFortunate()).thenReturn(true);
         Iterator<Ticket> mockIterator = IntStream
                 .range(0, maxNumber)
-                .mapToObj(number -> mockTicket)
+                .mapToObj(number -> {
+                    log.info(String.format("Формируем билет №%d", number));
+                    return mockTicket;
+                })
                 .iterator();
         ticketGenerator = Mockito.mock(TicketGenerator.class);
         when(ticketGenerator.getTickets()).thenReturn(mockIterator);
