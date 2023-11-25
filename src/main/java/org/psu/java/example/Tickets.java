@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @SpringBootApplication
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@ComponentScan("org.psu.java.example.context")
+@ComponentScan({"org.psu.java.example.context", "org.psu.java.example.presentation"})
 @AllArgsConstructor
 public class Tickets implements CommandLineRunner {
     //    @Autowired
@@ -67,7 +67,7 @@ public class Tickets implements CommandLineRunner {
     public void run(String... args) {
         log.info("Hello world Spring Boot style!");
         prepare().calculate("recordTicketGenerator");
-        prepare().calculate("eightDigitsTicketGenerator");
+//        prepare().calculate("eightDigitsTicketGenerator");
         prepare().calculate("fourDigitsTicketGenerator");
 //        recordTicketGenerator
 //                .stream()

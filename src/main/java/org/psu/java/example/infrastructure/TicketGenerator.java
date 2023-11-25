@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.psu.java.example.domain.Ticket;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -117,6 +118,7 @@ class SixDigitsTicketGenerator extends AbstractGenerator {
 
 @Service
 @Scope("prototype")
+@Primary
 class RecordTicketGenerator extends AbstractGenerator {
 
     public RecordTicketGenerator() {

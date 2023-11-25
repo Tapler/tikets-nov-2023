@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 @ComponentScan(basePackageClasses = TicketImpl.class)
 public class Config {
     @Bean
-//    @Primary
+    @Primary
     FortunateTicketService getEvenFortunateTicketService(@Qualifier("getEvenDecorator") UnaryOperator<Ticket> decorator) {
         return new FortunateTicketStreamImpl(decorator);
     }
