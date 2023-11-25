@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.psu.java.example.domain.Ticket;
 import org.psu.java.example.infrastructure.TicketGenerator;
 import org.psu.java.example.infrastructure.TicketImpl;
@@ -22,19 +26,22 @@ import static org.mockito.Mockito.when;
  * Тесты для {@link FortunateTicketStreamImpl}
  */
 @Slf4j
+@RunWith(MockitoJUnitRunner.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FortunateTicketStreamImplTest {
 
-     TicketGenerator ticketGenerator;
-     int maxNumber;
-     FortunateTicketService service;
-    private Ticket mockTicket;
+    @Mock
+    TicketGenerator ticketGenerator;
+    int maxNumber;
+    //    @InjectMocks
+    FortunateTicketService service;
+
+    @Spy
+    Ticket mockTicket = new TicketImpl(4, 0);
 
     @Before
     public void setUp() {
-        var length = 4;
         maxNumber = (int) Math.pow(10, 4);
-        mockTicket = Mockito.spy(new TicketImpl(length, maxNumber - 1));
         when(mockTicket.isFortunate()).thenReturn(true);
         Iterator<Ticket> mockIterator = IntStream
                 .range(0, maxNumber)
@@ -43,7 +50,6 @@ public class FortunateTicketStreamImplTest {
                     return mockTicket;
                 })
                 .iterator();
-        ticketGenerator = Mockito.mock(TicketGenerator.class);
         when(ticketGenerator.getTickets()).thenReturn(mockIterator);
         service = new FortunateTicketStreamImpl();
     }
@@ -54,15 +60,17 @@ public class FortunateTicketStreamImplTest {
         ticketGenerator = null;
         maxNumber = 0;
     }
-    
 
     @Test
     public void testCount() {
-        // given
+        // given Pivotal Software CRM Spring Cloud (Zuul, Eurica,...)
+        // EJB
         // when
         int actual = service.count(ticketGenerator.getTickets());
+
         // then
         assertEquals("Должно быть 10 000 счастливых билетов", maxNumber, actual);
         Mockito.verify(mockTicket, atLeast(maxNumber)).isFortunate();
     }
+
 }

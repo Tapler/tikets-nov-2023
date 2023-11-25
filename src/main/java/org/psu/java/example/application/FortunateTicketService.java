@@ -45,24 +45,3 @@ public interface FortunateTicketService {
 
 class FortunateTicketImpl implements FortunateTicketService {
 }
-
-//@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-class FortunateTicketStreamImpl implements FortunateTicketService {
-    UnaryOperator<Ticket> decorate;
-
-    public FortunateTicketStreamImpl() {
-        decorate = UnaryOperator.identity();
-    }
-
-    @Override
-    public int count(Iterator<Ticket> tickets) {
-        Iterable<Ticket> iterable = () -> tickets;
-        Stream<Ticket> ticketStream =
-                StreamSupport.stream(iterable.spliterator(), false);
-        return (int) ticketStream
-                .map(decorate)
-                .filter(Ticket::isFortunate).count();
-    }
-}
