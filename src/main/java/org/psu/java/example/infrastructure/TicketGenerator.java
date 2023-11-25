@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.psu.java.example.domain.Ticket;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
@@ -72,6 +73,26 @@ class EightDigitsTicketGenerator extends AbstractGenerator {
     }
 }
 
+@Service
+class FourDigitsTicketGenerator extends AbstractGenerator {
+
+    public FourDigitsTicketGenerator() {
+        super(4);
+    }
+
+    @Override
+    protected IntFunction<Ticket> toTicket() {
+        return number -> (TheTicket) () -> number;
+    }
+
+    interface TheTicket extends Ticket {
+        @Override
+        default int getLength() {
+            return 4;
+        }
+    }
+}
+
 class SixDigitsTicketGenerator extends AbstractGenerator {
 
     public SixDigitsTicketGenerator() {
@@ -92,7 +113,10 @@ class SixDigitsTicketGenerator extends AbstractGenerator {
                 .iterator();
     }
 }
+
+
 @Service
+@Scope("prototype")
 class RecordTicketGenerator extends AbstractGenerator {
 
     public RecordTicketGenerator() {
