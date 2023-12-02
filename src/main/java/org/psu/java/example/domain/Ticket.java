@@ -10,6 +10,7 @@ public interface Ticket {
         if (getLength() % 2 != 0) {
             return false;
         }
+
         var first = NumberUtils.digitsSum(getNumber() / getDiscriminant());
         var second = NumberUtils.digitsSum(getNumber() % getDiscriminant());
         return first == second;

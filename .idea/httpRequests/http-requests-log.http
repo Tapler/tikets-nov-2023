@@ -1,3 +1,95 @@
+GET http://localhost:8080/tickets/extra?type=SIX
+
+<> 2023-12-02T120816.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX?multiplicity=5
+
+<> 2023-12-02T120800.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra?type=SIX
+
+<> 2023-12-02T120734.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX?multiplicity=5
+
+<> 2023-12-02T120606.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra?type=SIX
+
+<> 2023-12-02T120553-1.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX?multiplicity=5
+
+<> 2023-12-02T120553.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX?multiplicity=5
+
+<> 2023-12-02T120156.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX?multiplicity=2
+
+<> 2023-12-02T120113.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX?multiplicity=2
+
+<> 2023-12-02T120044.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/type=SIX?multiplicity=2
+
+<> 2023-12-02T120005.400.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/type=SIX?multiplicity=2
+
+<> 2023-12-02T115937.400.json
+
+###
+
+GET http://localhost:8080/tickets/extra?type=SIX
+
+<> 2023-12-02T115528.200.json
+
+###
+
+GET http://localhost:8080/tickets/extra?type=SIX
+
+<> 2023-12-02T115002.500.html
+
+###
+
+GET http://localhost:8080/tickets/extra?type=SIX
+
+<> 2023-12-02T114641.500.json
+
+###
+
+GET http://localhost:8080/tickets/extra?generatorType=SIX
+
+###
+
+GET http://localhost:8080/tickets/extra?generatorType=SIX
+
+###
+
 GET http://localhost:8080/tickets/extra?generatorType=SIX
 
 ###
