@@ -56,7 +56,7 @@ public class TicketsController {
 
     @GetMapping("/extra/{generatorType}")
     public ResponseEntity<Integer> getPathVariableFortunateTicketsCount(@PathVariable GeneratorType generatorType) {
-        return countWithGenerator(fortunateTicketService, generatorType);
+        return ResponseEntity.ok(countWithGenerator(fortunateTicketService, generatorType));
     }
 
     @GetMapping("/extra")
@@ -64,15 +64,15 @@ public class TicketsController {
         if (generatorType == null) {
             return ResponseEntity.badRequest().build();
         }
-        return countWithGenerator(fortunateTicketService, generatorType);
+        return ResponseEntity.ok(countWithGenerator(fortunateTicketService, generatorType));
     }
 
     @GetMapping("/extra-multiplicity/{type}")
     public ResponseEntity<Integer> getFortunateTicketsMultiplicityCount(@PathVariable(name = "type") GeneratorType generatorType,
                                                                         @RequestParam int multiplicity) {
         return switch (multiplicity) {
-            case 2 -> countWithGenerator(evenFortunateTicketService, generatorType);
-            case 5 -> countWithGenerator(multipleOfFiveFortunateTicketService, generatorType);
+            case 2 -> ResponseEntity.ok(countWithGenerator(evenFortunateTicketService, generatorType));
+            case 5 -> ResponseEntity.ok(countWithGenerator(multipleOfFiveFortunateTicketService, generatorType));
             default -> ResponseEntity.badRequest().build();
         };
     }
@@ -86,28 +86,19 @@ public class TicketsController {
     private FortunateTicketResponse calculate(FortunateTicketRequest item) {
         if (item.multiplicity() == null) {
             var count = countWithGenerator(fortunateTicketService, item.type());
-            return new FortunateTicketResponse(item.type(), item.multiplicity(), count.getBody());
+            return new FortunateTicketResponse(item.type(), item.multiplicity(), count);
         }
 
         var service = getFortunateTicketServices().getOrDefault(item.multiplicity(), fortunateTicketService);
         var count = countWithGenerator(service, item.type());
-        return new FortunateTicketResponse(item.type(), item.multiplicity(), count.getBody());
+        return new FortunateTicketResponse(item.type(), item.multiplicity(), count);
     }
 
-    private ResponseEntity<Integer> countWithGenerator(FortunateTicketService service, GeneratorType generatorType) {
+    private int countWithGenerator(FortunateTicketService service, GeneratorType generatorType) {
         return switch (generatorType) {
-            case FOUR -> {
-                int count = service.count(fourDigitsTicketGenerator.getTickets());
-                yield ResponseEntity.ok(count);
-            }
-            case SIX -> {
-                int count = service.count(sixDigitsTicketGenerator.getTickets());
-                yield ResponseEntity.ok(count);
-            }
-            case EIGHT -> {
-                int count = service.count(eightDigitsTicketGenerator.getTickets());
-                yield ResponseEntity.ok(count);
-            }
+            case FOUR -> service.count(fourDigitsTicketGenerator.getTickets());
+            case SIX -> service.count(sixDigitsTicketGenerator.getTickets());
+            case EIGHT -> service.count(eightDigitsTicketGenerator.getTickets());
         };
     }
 
