@@ -11,20 +11,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public interface TicketGenerator {
     static TicketGenerator getInstance(GeneratorType type) {
         return switch (type) {
+            case FOUR -> new BaseGenerator(4);
             case SIX -> new RecordTicketGenerator();
             case EIGHT -> new EightDigitsTicketGenerator();
             default -> throw new IllegalArgumentException();
         };
     }
-
     Iterator<Ticket> getTickets();
-
     Optional<Ticket> getTicket(int number);
 }
 
@@ -32,25 +30,42 @@ public interface TicketGenerator {
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 abstract class AbstractGenerator implements TicketGenerator {
     @Getter(AccessLevel.PROTECTED)
-    int ticketLength;
+    int length;
 
-    protected abstract IntFunction<Ticket> toTicket();
+    protected abstract Ticket toTicket(int number);
 
     protected IntStream getNumbersAsStream() {
-        return IntStream.range(0, (int) Math.pow(10, ticketLength));
+        var maxNumber = (int) Math.pow(10, length);
+        return IntStream.rangeClosed(0, maxNumber);
     }
 
     @Override
     public Iterator<Ticket> getTickets() {
-        return getNumbersAsStream().mapToObj(toTicket()).iterator();
+        return getNumbersAsStream().mapToObj(this::toTicket).iterator();
     }
 
     @Override
     public Optional<Ticket> getTicket(int number) {
+        var maxNumber = Math.pow(10, length);
         return Optional
                 .of(number)
-                .filter(n -> number >= 0 && number < (int) Math.pow(10, ticketLength))
-                .map(toTicket()::apply);
+                .filter(n -> number >= 0 && number < maxNumber)
+                .map(this::toTicket);
+    }
+}
+
+/**
+ * Базовая реализация генератора
+ */
+class BaseGenerator extends AbstractGenerator {
+
+    public BaseGenerator(int length) {
+        super(length);
+    }
+
+    @Override
+    protected Ticket toTicket(int number) {
+        return new TicketRecordImpl(getLength(), number);
     }
 }
 
@@ -62,8 +77,8 @@ class EightDigitsTicketGenerator extends AbstractGenerator {
     }
 
     @Override
-    protected IntFunction<Ticket> toTicket() {
-        return number -> (TheTicket) () -> number;
+    protected Ticket toTicket(int number) {
+        return  (TheTicket) () -> number;
     }
 
     interface TheTicket extends Ticket {
@@ -73,37 +88,7 @@ class EightDigitsTicketGenerator extends AbstractGenerator {
         }
     }
 }
-
-@Service
-class FourDigitsTicketGenerator extends AbstractGenerator {
-
-    public FourDigitsTicketGenerator() {
-        super(4);
-    }
-
-    @Override
-    protected IntFunction<Ticket> toTicket() {
-        return number -> (TheTicket) () -> number;
-    }
-
-    interface TheTicket extends Ticket {
-        @Override
-        default int getLength() {
-            return 4;
-        }
-    }
-}
-
-class SixDigitsTicketGenerator extends AbstractGenerator {
-
-    public SixDigitsTicketGenerator() {
-        super(6);
-    }
-
-    @Override
-    protected IntFunction<Ticket> toTicket() {
-        return null;
-    }
+class SixDigitsTicketGenerator implements TicketGenerator {
 
     @Override
     public Iterator<Ticket> getTickets() {
@@ -113,12 +98,17 @@ class SixDigitsTicketGenerator extends AbstractGenerator {
                 .map(Ticket.class::cast)
                 .iterator();
     }
+
+    @Override
+    public Optional<Ticket> getTicket(final int number) {
+        return Optional
+                .of(number)
+                .filter(n -> number >= 0 && number < 1000000)
+                .map(n -> new TicketImpl(6, n));
+    }
 }
 
-
-@Service
-@Scope("prototype")
-@Primary
+@Service("sixDigitsTicketGenerator")
 class RecordTicketGenerator extends AbstractGenerator {
 
     public RecordTicketGenerator() {
@@ -126,10 +116,9 @@ class RecordTicketGenerator extends AbstractGenerator {
     }
 
     @Override
-    protected IntFunction<Ticket> toTicket() {
-        return number -> new TicketRecordImpl(6, number);
+    protected Ticket toTicket(int number) {
+        return new TicketRecordImpl(getLength(), number);
     }
-
 }
 
 class LambdaTicketGenerator extends AbstractGenerator {
@@ -139,16 +128,14 @@ class LambdaTicketGenerator extends AbstractGenerator {
     }
 
     @Override
-    protected IntFunction<Ticket> toTicket() {
-        return number -> (SixDigitTicket) () -> number;
+    protected Ticket toTicket(int number) {
+        return (TheTicket) () -> number;
     }
 
-    interface SixDigitTicket extends Ticket {
+    interface TheTicket extends Ticket {
         @Override
         default int getLength() {
             return 6;
         }
     }
 }
-
-

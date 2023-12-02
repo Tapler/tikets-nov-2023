@@ -1,0 +1,60 @@
+GET http://localhost:8080/tickets/extra?generatorType=SIX
+
+###
+
+GET http://localhost:8080/tickets/extra?generatorType=SIX
+
+###
+
+GET http://localhost:8080/tickets/extra
+
+###
+
+GET http://localhost:8080/tickets/extra/SIX
+
+<> 2023-12-02T113652.500.json
+
+###
+
+GET http://localhost:8080/tickets/six
+
+<> 2023-12-02T113627.500.json
+
+###
+
+GET http://localhost:8080/tickets
+
+<> 2023-12-02T113613.405.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/2
+
+<> 2023-12-02T113426.400.json
+
+###
+
+GET http://localhost:8080/tickets/extra-multiplicity/SIX
+
+<> 2023-12-02T113417.400.json
+
+###
+
+GET http://localhost:8080/tickets
+
+<> 2023-11-25T145515.200.json
+
+###
+
+GET http://localhost:8080/tickets
+
+<> 2023-11-25T145306.404.json
+
+###
+
+GET http://localhost:8080/tickets
+
+<> 2023-11-25T145136.404.json
+
+###
+
