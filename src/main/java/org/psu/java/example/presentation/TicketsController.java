@@ -5,20 +5,26 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.psu.java.example.application.FortunateTicketService;
 import org.psu.java.example.infrastructure.GeneratorType;
 import org.psu.java.example.infrastructure.TicketGenerator;
+import org.psu.java.example.presentation.entities.ResponseHistory;
+import org.psu.java.example.presentation.entities.ResponseHistoryRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * REST-контроллер для работы с билетами
  */
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/tickets")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,6 +36,7 @@ public class TicketsController {
     FortunateTicketService fortunateTicketService;
     FortunateTicketService evenFortunateTicketService;
     FortunateTicketService multipleOfFiveFortunateTicketService;
+    ResponseHistoryRepository responseHistoryRepository;
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
     Map<Integer, FortunateTicketService> fortunateTicketServices = prepare();
@@ -47,6 +54,7 @@ public class TicketsController {
         int count = fortunateTicketService.count(sixDigitsTicketGenerator.getTickets());
         return ResponseEntity.ok(count);
     }
+
 
     @GetMapping("/four")
     public ResponseEntity<Integer> getFourDigitsFortunateTicketsCount() {
@@ -90,7 +98,16 @@ public class TicketsController {
         }
 
         var service = getFortunateTicketServices().getOrDefault(item.multiplicity(), fortunateTicketService);
+        LocalDateTime startTime = LocalDateTime.now();
         var count = countWithGenerator(service, item.type());
+        LocalDateTime endTime = LocalDateTime.now();
+        ResponseHistory responseHistory = ResponseHistory.builder()
+                .startTime(startTime)
+                .endTime(endTime)
+                .result(count)
+                .build();
+        responseHistoryRepository.save(responseHistory);
+        log.info(responseHistory.toString());
         return new FortunateTicketResponse(item.type(), item.multiplicity(), count);
     }
 

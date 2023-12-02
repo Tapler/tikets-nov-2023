@@ -16,14 +16,14 @@ public interface FortunateTicketService {
         return new FortunateTicketImpl();
     }
 
-    static FortunateTicketService getStreamInstance() {
-        UnaryOperator<Ticket> evenDecorator = EvenDecorator::new;
-        UnaryOperator<Ticket> lastDigitSixDecorator = LastDigitSixDecorator::new;
-
-        UnaryOperator<Ticket> mapper = ticket -> evenDecorator.andThen(lastDigitSixDecorator).apply(ticket);
-
-        return new FortunateTicketStreamImpl(mapper);
-    }
+//    static FortunateTicketService getStreamInstance() {
+//        UnaryOperator<Ticket> evenDecorator = EvenDecorator::new;
+//        UnaryOperator<Ticket> lastDigitSixDecorator = LastDigitSixDecorator::new;
+//
+//        UnaryOperator<Ticket> mapper = ticket -> evenDecorator.andThen(lastDigitSixDecorator).apply(ticket);
+//
+//        return new FortunateTicketStreamImpl(mapper);
+//    }
 
 //    static FortunateTicketService getStreamInstance() {
 //        UnaryOperator<Ticket> mapper = ticket -> new LastDigitSixDecorator(new EvenDecorator(ticket));

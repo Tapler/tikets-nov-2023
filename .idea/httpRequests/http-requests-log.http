@@ -1,3 +1,153 @@
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  },
+  {
+    "type": "FOUR",
+    "multiplicity": 2
+  }
+]
+
+<> 2023-12-02T145309.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  },
+  {
+    "type": "FOUR",
+    "multiplicity": 2
+  }
+]
+
+<> 2023-12-02T144951.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  },
+  {
+    "type": "FOUR",
+    "multiplicity": 2
+  }
+]
+
+<> 2023-12-02T144949.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  },
+  {
+    "type": "FOUR",
+    "multiplicity": 2
+  }
+]
+
+<> 2023-12-02T144614.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  },
+  {
+    "type": "FOUR",
+    "multiplicity": 2
+  }
+]
+
+<> 2023-12-02T144545.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  },
+  {
+    "type": "FOUR",
+    "multiplicity": 2
+  }
+]
+
+<> 2023-12-02T144511.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  }
+]
+
+<> 2023-12-02T144457.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  }
+]
+
+<> 2023-12-02T144305.200.json
+
+###
+
+POST http://localhost:8081/tickets
+Content-Type: application/json
+
+[
+  {
+    "type": "SIX",
+    "multiplicity": 5
+  }
+]
+
+<> 2023-12-02T144141.200.json
+
+###
+
 POST http://localhost:8080/tickets
 Content-Type: application/json
 
