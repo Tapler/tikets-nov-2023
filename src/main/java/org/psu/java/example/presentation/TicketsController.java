@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * REST-контроллер для работы с билетами
@@ -51,20 +50,27 @@ public class TicketsController {
     @GetMapping("/six")
     public ResponseEntity<Integer> getSixDigitsFortunateTicketsCount() {
         // Servlet(HttpRequest, HttpResponse) doGet, doPost, doPut Jackson
+        ResponseHistory responseHistory = createResponseHistory();
         int count = fortunateTicketService.count(sixDigitsTicketGenerator.getTickets());
+        saveResponseHistory(responseHistory, count);
         return ResponseEntity.ok(count);
     }
 
 
     @GetMapping("/four")
     public ResponseEntity<Integer> getFourDigitsFortunateTicketsCount() {
+        ResponseHistory responseHistory = createResponseHistory();
         int count = fortunateTicketService.count(fourDigitsTicketGenerator.getTickets());
+        saveResponseHistory(responseHistory, count);
         return ResponseEntity.ok(count);
     }
 
     @GetMapping("/extra/{generatorType}")
     public ResponseEntity<Integer> getPathVariableFortunateTicketsCount(@PathVariable GeneratorType generatorType) {
-        return ResponseEntity.ok(countWithGenerator(fortunateTicketService, generatorType));
+        ResponseHistory responseHistory = createResponseHistory();
+        int count = countWithGenerator(fortunateTicketService, generatorType);
+        saveResponseHistory(responseHistory, count);
+        return ResponseEntity.ok(count);
     }
 
     @GetMapping("/extra")
@@ -72,17 +78,29 @@ public class TicketsController {
         if (generatorType == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(countWithGenerator(fortunateTicketService, generatorType));
+        ResponseHistory responseHistory = createResponseHistory();
+        int count = countWithGenerator(fortunateTicketService, generatorType);
+        saveResponseHistory(responseHistory, count);
+        return ResponseEntity.ok(count);
     }
 
     @GetMapping("/extra-multiplicity/{type}")
     public ResponseEntity<Integer> getFortunateTicketsMultiplicityCount(@PathVariable(name = "type") GeneratorType generatorType,
                                                                         @RequestParam int multiplicity) {
-        return switch (multiplicity) {
-            case 2 -> ResponseEntity.ok(countWithGenerator(evenFortunateTicketService, generatorType));
-            case 5 -> ResponseEntity.ok(countWithGenerator(multipleOfFiveFortunateTicketService, generatorType));
-            default -> ResponseEntity.badRequest().build();
-        };
+        ResponseHistory responseHistory = createResponseHistory();
+        int count;
+        switch (multiplicity) {
+            case 2:
+                count = countWithGenerator(evenFortunateTicketService, generatorType);
+                break;
+            case 5:
+                count = countWithGenerator(multipleOfFiveFortunateTicketService, generatorType);
+                break;
+            default:
+                return ResponseEntity.badRequest().build();
+        }
+        saveResponseHistory(responseHistory, count);
+        return ResponseEntity.ok(count);
     }
 
     @PostMapping
@@ -98,16 +116,9 @@ public class TicketsController {
         }
 
         var service = getFortunateTicketServices().getOrDefault(item.multiplicity(), fortunateTicketService);
-        LocalDateTime startTime = LocalDateTime.now();
+        ResponseHistory responseHistory = createResponseHistory();
         var count = countWithGenerator(service, item.type());
-        LocalDateTime endTime = LocalDateTime.now();
-        ResponseHistory responseHistory = ResponseHistory.builder()
-                .startTime(startTime)
-                .endTime(endTime)
-                .result(count)
-                .build();
-        responseHistoryRepository.save(responseHistory);
-        log.info(responseHistory.toString());
+        saveResponseHistory(responseHistory, count);
         return new FortunateTicketResponse(item.type(), item.multiplicity(), count);
     }
 
@@ -118,6 +129,20 @@ public class TicketsController {
             case EIGHT -> service.count(eightDigitsTicketGenerator.getTickets());
         };
     }
+
+    private ResponseHistory createResponseHistory() {
+        LocalDateTime startTime = LocalDateTime.now();
+        return ResponseHistory.builder().startTime(startTime).build();
+    }
+
+    private void saveResponseHistory(ResponseHistory responseHistory, int count) {
+        responseHistory.setEndTime(LocalDateTime.now());
+        responseHistory.setResult(count);
+        responseHistoryRepository.save(responseHistory);
+        log.info(responseHistory.toString());
+        log.info(String.format("Все объекты: %s",responseHistoryRepository.findAll()));
+    }
+
 
     record FortunateTicketRequest(GeneratorType type, Integer multiplicity) { }
     record FortunateTicketResponse(GeneratorType type, Integer multiplicity, int count) { }
